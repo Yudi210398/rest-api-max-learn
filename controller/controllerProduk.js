@@ -1,4 +1,7 @@
 import ProduksModel from "../model/ProduksModel.js";
+export const funsiCari = (data, id) => {
+  return data.filter((data) => data._id.toString() === id);
+};
 
 export const produk = async (req, res, next) => {
   try {
@@ -28,7 +31,9 @@ export const produkPost = async (req, res, next) => {
     const produks = await new ProduksModel({
       namaProduk: req.body.nama,
       harga: +req.body.harga,
+      image: req.file.path,
     }).save();
+
     res.status(201).json({
       pesan: "sukses post",
       produks,
@@ -42,7 +47,7 @@ export const idRute = async (req, res, next) => {
   try {
     const id = req.params.produkId;
     const getProduk = await ProduksModel.find();
-    const filter = getProduk.filter((data) => data._id.toString() === id);
+    const filter = funsiCari(getProduk, id);
 
     if (filter.length < 1) {
       const error = new Error("tidal ada data yang dicari");
@@ -50,10 +55,10 @@ export const idRute = async (req, res, next) => {
       throw error;
     }
 
-    let dataTemu = filter[0];
+    let detailProduk = filter[0];
 
     res.status(200).json({
-      dataTemu,
+      detailProduk,
       pesan: "berhasi dapat data",
     });
   } catch (err) {
@@ -79,7 +84,7 @@ export const produkPatch = async (req, res, next) => {
       dataUpdate,
     });
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 

@@ -1,7 +1,8 @@
 import userModel from "../model/userModel.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const errors = (pesan, code = 404) => {
+export const errors = (pesan, code = 404) => {
   const error = new Error(pesan);
   error.statusCode = code;
   throw error;
@@ -60,11 +61,24 @@ export const loginUser = async (req, res, next) => {
     bcrypt.compare(req.body.password, cekEmail.password, (err, result) => {
       try {
         if (err) errors("Auth Failed");
-        if (result)
-          res.status(201).json({
+        if (result) {
+          const token = jwt.sign(
+            {
+              email: cekEmail.email,
+              id: cekEmail._id,
+            },
+            "rahasia",
+            {
+              expiresIn: "1h",
+            }
+          );
+          return res.status(201).json({
             pesan: `Sukses login`,
             result,
+            hasil: cekEmail,
+            token,
           });
+        }
         errors("password salah");
       } catch (err) {
         next(err);

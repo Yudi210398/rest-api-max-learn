@@ -69,7 +69,7 @@ export const loginUser = async (req, res, next) => {
             },
             "rahasia",
             {
-              expiresIn: "1h",
+              expiresIn: "120000",
             }
           );
           return res.status(201).json({

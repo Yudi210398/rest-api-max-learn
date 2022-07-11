@@ -13,6 +13,13 @@ export const produk = async (req, res, next) => {
         pesan: "data tidak ada get",
         data,
       });
+
+    if (data.length === 0)
+      return res.status(200).json({
+        pesan: "tidak ada data",
+        data,
+      });
+
     const dataSet = {
       jumlahData: data.length,
       data,
